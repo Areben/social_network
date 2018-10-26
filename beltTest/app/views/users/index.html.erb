@@ -1,0 +1,37 @@
+<h1>Users you may want to connect with</h1>
+
+<table>
+    <thead>
+        <tr>
+            <td>Name</td>
+            <td>Action</td>
+        </tr>
+    </thead>
+
+    <tbody>
+        <% @hevals.each do |heval| %>
+            <% if heval.invites.find_by(user_id: session[:user_id]) == nil %>
+                <% if heval.id != current_user.id %>
+
+                    <tr>
+                        <td>
+                            <a href="/users/<%= heval.user.id %>">
+                                <%= heval.user.name %>
+                            </a>
+                        </td>
+
+                        <td>
+                            <form action="/network/send/<%= heval.user.id %>" method="post">
+                                <input type="hidden" name="authenticity_token"
+                                    value="<%= form_authenticity_token %>">
+
+                                <input type="submit" value="Invite">
+                            </form>
+                        </td>
+                    </tr>
+
+                <% end %>
+            <% end %>
+        <% end %>
+    </tbody>
+</table>

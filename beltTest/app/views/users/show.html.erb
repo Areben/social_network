@@ -1,0 +1,109 @@
+<div class="bigBox">
+
+    <h1>Howdy <%= current_user.name %></h1>
+
+    <div class="smallBox">
+        <h3>Profile Bio</h3>
+
+        <p><%= current_user.description %></p>
+
+    </div>
+
+    <div class="smallBox">
+        <h3>Your professional Network</h3>
+
+        <% @users.each do |user| %>
+            <% if @inv.find_by(user_id: user.id) != nil %>
+                <% if @inv.find_by(user_id: user.id).connected == true %>
+                
+                    <p><%= user.name %></p>
+                    
+                <% end %>
+            <% end %>
+        <% end %>
+
+    </div>
+
+    <div class="smallBox">
+        <h3>Invitations</h3>
+        <p>The following people asked you to be on their network</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <td>Name</td>
+                    <td colspan="2">Action</td>
+                </tr>
+            </thead>
+            <tbody>
+                <% @users.each do |user| %>
+                    <% if @inv.find_by(user_id: user.id) != nil %>
+                        <% if @inv.find_by(user_id: user.id).connected == nil %>
+
+                            <tr>
+                                <td><%= user.name %></td>
+                                <td>
+                                    <form action="/network/accept/<%= user.id %>" method="post">
+                                        <input type="hidden" name="authenticity_token"
+                                            value="<%= form_authenticity_token %>">
+
+                                        <input type="submit" value="Accept">
+                                    </form>
+                                </td>
+
+                                <td>
+                                    <form action="/network/ignore/<%= user.id %>" method="post">
+                                        <input type="hidden" name="authenticity_token"
+                                            value="<%= form_authenticity_token %>">
+
+                                        <input type="submit" value="Ignore">
+                                    </form>
+                                </td>
+                            </tr>
+
+                        <% end %>
+                    <% end %>
+                <% end %>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+
+<!-- class User < ActiveRecord::Base
+    has_secure_password
+
+    has_many :invites, source: :user
+    has_many :friends, source: :user,
+        through: :invites
+
+    EMAIL_REGEX = /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]+)\z/i
+
+    validates :name, presence: true,
+        length: { in: 2..20 }
+    validates :password, presence: true,
+        length: { in: 8..20 }
+    validates :email, presence: true,
+        uniqueness: { case_sensitive: false },
+        format: { with: EMAIL_REGEX }
+
+    before_save :downcase_email
+
+    after_create :successfully_created
+
+    after_update :successfully_updated
+
+    private
+        def downcase_email
+            self.email.downcase!
+        end
+
+        def successfully_created
+            puts "Successfully created a new user"
+        end
+
+        def successfully_updated
+            puts "Successfully updated a existing user"
+        end
+end -->
